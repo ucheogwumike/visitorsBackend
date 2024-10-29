@@ -89,7 +89,7 @@ export class AuthService {
 
   async registerStaff(
     staffBody: StaffDto,
-    roleStaff: RoleDTO,
+    roleStaff: any,
   ): Promise<{ access_token: string; authUser: any }> {
     const staff = await this.staffService.findOne(staffBody.email);
 
@@ -101,20 +101,24 @@ export class AuthService {
     // if (!(await bcrypt.compare(password, user.password))) {
     //   throw new UnauthorizedException();
     // }
-    if (roleStaff.name == 'admin') {
+    console.log(roleStaff['staff']);
+    if (roleStaff['staff'] == 'admin') {
       let role = await this.rolesService.findOne('admin');
+      console.log(role, 'admin');
       if (!role) {
         role = await this.rolesService.create(roleStaff);
       }
       staffBody.role = role;
-    } else if (roleStaff.name == 'staff') {
+    } else if (roleStaff['staff'] == 'staff') {
       let role = await this.rolesService.findOne('staff');
+      console.log(role, 'staff');
       if (!role) {
         role = await this.rolesService.create(roleStaff);
       }
       staffBody.role = role;
     }
 
+    console.log(staffBody.role);
     const newStaff = await this.staffService.create(staffBody);
 
     const payload = { sub: newStaff.email, name: newStaff.email };

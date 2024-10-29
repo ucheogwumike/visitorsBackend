@@ -10,12 +10,14 @@ import * as bcrypt from 'bcrypt';
 import { Visitor } from './schema/visitor.schema';
 import { VisitorDTO } from './dto/visitor.dto';
 import { StaffsService } from 'src/staffs/staffs.service';
+import { RolesService } from 'src/roles/roles.service';
 
 @Injectable()
 export class VisitorsService {
   constructor(
     @InjectModel(Visitor.name) private VisitorModel: Model<Visitor>,
     private staffService: StaffsService,
+    private roleService: RolesService,
   ) {}
 
   SuccessResponse(
@@ -31,17 +33,22 @@ export class VisitorsService {
   }
 
   async findOne(email: string): Promise<Visitor | null> {
-    return await this.VisitorModel.findOne({ email });
+    return await this.VisitorModel.findOne({ email }).populate('role').exec();
   }
 
   async create(visitor: VisitorDTO): Promise<any> {
     if (!visitor.password) {
       visitor.password = visitor.email;
     }
+    console.log('check2');
     const password = await bcrypt.hash(visitor.password, 10);
     visitor.password = password;
-    await this.VisitorModel.create(visitor);
-    if (await this.findOne(visitor.email)) {
+    const role = await this.roleService.findOne('visitor');
+    visitor.roleName = role?.name;
+    visitor.role = role;
+    visitor = await this.VisitorModel.create(visitor);
+    console.log('check');
+    if (visitor.email) {
       return this.SuccessResponse(
         'visitor created successfully',
         { created: true, visitor },

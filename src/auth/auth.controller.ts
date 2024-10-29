@@ -35,7 +35,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('register/staff')
   Register(@Body() RegisterDto: StaffDto, @Body() staff: RoleDTO) {
-    console.log(RegisterDto);
+    console.log(staff);
     return this.authService.registerStaff(RegisterDto, staff);
   }
 

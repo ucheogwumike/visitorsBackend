@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { urlencoded, json } from 'express';
-// import { join } from 'path';
+import { join } from 'path';
 // import express from 'express';
 import * as hbs from 'express-handlebars';
 
@@ -21,7 +21,7 @@ async function bootstrap() {
     credentails: true,
   };
   app.enableCors(corsOption);
-  // app.use('/images', express.static(join(__dirname, '..', 'public/images')));
+  app.useStaticAssets(join(__dirname, '..', 'public'));
   // app.use(
   //   '/templates',
   //   express.static(join(__dirname, '..', 'public/templates')),

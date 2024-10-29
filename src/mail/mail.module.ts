@@ -16,6 +16,8 @@ import {
   DepartmentsSchema,
 } from 'src/departments/schema/department.schema';
 import { DepartmentsService } from 'src/departments/departments.service';
+import { Role, RolesSchema } from 'src/roles/schemas/role.schema';
+import { RolesService } from 'src/roles/roles.service';
 
 @Module({
   imports: [
@@ -41,6 +43,7 @@ import { DepartmentsService } from 'src/departments/departments.service';
       { name: Staff.name, schema: StaffSchema },
       { name: Visit.name, schema: VisitsSchema },
       { name: Department.name, schema: DepartmentsSchema },
+      { name: Role.name, schema: RolesSchema },
     ]),
   ],
   providers: [
@@ -49,6 +52,7 @@ import { DepartmentsService } from 'src/departments/departments.service';
     VisitorsService,
     VisitsService,
     DepartmentsService,
+    RolesService,
   ],
   controllers: [MailController],
 })

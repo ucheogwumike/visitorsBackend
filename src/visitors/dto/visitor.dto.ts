@@ -19,7 +19,7 @@ export class VisitorDTO {
   company: string;
 
   profile_picture: string;
-  roleName: string;
+  roleName?: string;
   role?: any;
   status: boolean;
 }

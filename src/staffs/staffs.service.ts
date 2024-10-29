@@ -14,7 +14,7 @@ export class StaffsService {
   }
 
   async findOne(email: string): Promise<Staff | null> {
-    return await this.staffModel.findOne({ email });
+    return await this.staffModel.findOne({ email }); //?.populate('role').exec();
   }
 
   async create(staff: StaffDto): Promise<any> {

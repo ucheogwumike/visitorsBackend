@@ -6,6 +6,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { StaffsModule } from 'src/staffs/staffs.module';
 import { Staff, StaffSchema } from 'src/staffs/schemas/staff.schema';
 import { StaffsService } from 'src/staffs/staffs.service';
+import { Role, RolesSchema } from 'src/roles/schemas/role.schema';
+import { RolesService } from 'src/roles/roles.service';
 
 @Module({
   imports: [
@@ -13,9 +15,10 @@ import { StaffsService } from 'src/staffs/staffs.service';
     MongooseModule.forFeature([
       { name: Visitor.name, schema: VisitorsSchema },
       { name: Staff.name, schema: StaffSchema },
+      { name: Role.name, schema: RolesSchema },
     ]),
   ],
   controllers: [VisitorsController],
-  providers: [VisitorsService, StaffsService],
+  providers: [VisitorsService, StaffsService, RolesService],
 })
 export class VisitorsModule {}
