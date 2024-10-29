@@ -6,6 +6,7 @@ export type VisitorDocument = HydratedDocument<Visitor>;
 
 @Schema()
 export class Visitor {
+  _id: string;
   @Prop()
   firstName: string;
 
@@ -32,7 +33,7 @@ export class Visitor {
   @Prop()
   company: string;
 
-  @Prop()
+  @Prop({ default: null })
   profile_picture: string;
 
   @Prop({ default: true })

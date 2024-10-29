@@ -3,6 +3,7 @@ import {
   Body,
   Get,
   Post,
+  Query,
   Patch,
   HttpCode,
   HttpStatus,
@@ -20,6 +21,16 @@ export class VisitsController {
   @Get()
   async findAll(): Promise<Visit[]> {
     return this.visitsService.findAll();
+  }
+
+  @Get('visits')
+  async findAllForAUser(@Query() detail: any): Promise<any> {
+    return this.visitsService.findAllForAUser(detail);
+  }
+
+  @Get('one')
+  async findOne(@Query() code: any): Promise<any> {
+    return this.visitsService.findOne(code.code);
   }
 
   @HttpCode(HttpStatus.OK)

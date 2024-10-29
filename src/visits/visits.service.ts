@@ -52,6 +52,44 @@ export class VisitsService {
     return await this.VisitModel.findOne({ code });
   }
 
+  async findAllForAUser(detail: any): Promise<any> {
+    console.log(detail.email, detail.type);
+    let user;
+    if (detail.type === 'staff') {
+      user = await this.staffService.findOne(detail.email);
+      console.log(user);
+      const userData = await this.VisitModel.find({
+        staff: user?._id,
+      }).exec();
+      // if (user) {
+      //   const x = await this.VisitModel.aggregate([
+      //     {
+      //       $lookup: {
+      //         from: 'staff',
+      //         localField: 'staff',
+      //         foreignField: '_id',
+      //         as: 'resultingArray',
+      //       },
+      //     },
+      //     { $match: { 'resultingArray._id': user['_id'] } },
+      //   ]);
+
+      //   console.log(x);
+      // }
+      return userData;
+    } else if (detail.type === 'visitor') {
+      user = await this.visitorService.findOne(detail.email);
+      console.log(user);
+      const userData = await this.VisitModel.find({
+        visitor: user?._id,
+      })
+        .populate('department')
+        .exec();
+
+      return userData;
+    }
+  }
+
   async create(visit: VisitDTO): Promise<any> {
     // if (await this.findOne(department.name)) {
     //   throw new BadRequestException('departnment name already exists');
@@ -76,7 +114,7 @@ export class VisitsService {
       visit.departmentName,
     );
 
-    if (!visit.staff) {
+    if (!visit.staff && visit.type !== 'visitor') {
       throw new NotFoundException('staff not found');
     }
 

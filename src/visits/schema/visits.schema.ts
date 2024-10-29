@@ -8,7 +8,7 @@ export type VisitDocument = HydratedDocument<Visit>;
 
 @Schema()
 export class Visit {
-  @Prop()
+  @Prop({ default: false })
   rescheduled: boolean;
 
   @Prop({ type: Date, default: Date.now })
@@ -46,6 +46,9 @@ export class Visit {
 
   @Prop({ default: 'ongoing' })
   status: string;
+
+  @Prop({ default: null })
+  picture: string;
 
   @Prop()
   code: string;

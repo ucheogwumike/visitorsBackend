@@ -1,6 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
 
 export class StaffDto {
+  _id?: string;
   @IsNotEmpty()
   firstName: string;
 

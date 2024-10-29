@@ -31,6 +31,8 @@ export class VisitDTO {
   @IsNotEmpty()
   departmentName: string;
 
+  picture?: string;
+
   visitor?: any;
 
   staff?: any;

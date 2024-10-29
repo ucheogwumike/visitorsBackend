@@ -6,6 +6,8 @@ export type StaffDocument = HydratedDocument<Staff>;
 
 @Schema()
 export class Staff {
+  // @Prop({ unique: true })
+  _id: string;
   @Prop()
   firstName: string;
 
@@ -15,22 +17,22 @@ export class Staff {
   @Prop()
   MiddleName: string;
 
-  @Prop()
+  @Prop({ unique: true })
   regNumber: string;
 
   @Prop()
   department: string;
 
-  @Prop()
+  @Prop({ unique: true })
   email: string;
 
   @Prop()
   password: string;
 
-  @Prop()
+  @Prop({ unique: true })
   phone: string;
 
-  @Prop()
+  @Prop({ default: null })
   profile_picture: string;
 
   @Prop()
