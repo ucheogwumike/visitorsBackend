@@ -28,7 +28,7 @@ import { RolesService } from 'src/roles/roles.service';
         secure: true,
         auth: {
           user: process.env.MAIL_USER,
-          pass: process.env.MAIL_PASS,
+          pass: 'wazza1000', //process.env.MAIL_PASS,
         },
       },
       template: {
