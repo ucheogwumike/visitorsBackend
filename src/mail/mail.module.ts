@@ -25,6 +25,7 @@ import { RolesService } from 'src/roles/roles.service';
       transport: {
         host: String(process.env.MAIL_HOST),
         port: Number(process.env.MAIL_PORT),
+        secure: true,
         auth: {
           user: process.env.MAIL_USER,
           pass: process.env.MAIL_PASS,
