@@ -12,11 +12,12 @@ import { VisitDTO } from './dto/visits.dto';
 import { StaffsService } from 'src/staffs/staffs.service';
 import { VisitorsService } from 'src/visitors/visitors.service';
 import { DepartmentsService } from 'src/departments/departments.service';
-
+import { Visitor } from 'src/visitors/schema/visitor.schema';
 @Injectable()
 export class VisitsService {
   constructor(
     @InjectModel(Visit.name) private VisitModel: Model<Visit>,
+    @InjectModel(Visitor.name) private VisitorModel: Model<Visitor>,
     private staffService: StaffsService,
     private visitorService: VisitorsService,
     private departmentService: DepartmentsService,
@@ -49,7 +50,26 @@ export class VisitsService {
   }
 
   async findOne(code: any): Promise<Visit | null> {
-    return await this.VisitModel.findOne({ code });
+    return await this.VisitModel.findOne({ code })
+      .populate('visitor')
+      .populate('staff')
+      .populate('department');
+  }
+
+  async findVisitor(code: any): Promise<any> {
+    const visit = await this.VisitModel.findOne({ code });
+
+    const visitor = await this.VisitorModel.findById(visit?.visitor[0]._id);
+
+    if (visitor) {
+      return this.SuccessResponse(
+        'visitor created successfully',
+        visitor,
+        HttpStatus.OK,
+      );
+    } else {
+      throw new NotFoundException('visitor not found');
+    }
   }
 
   async findAllForAUser(detail: any): Promise<any> {

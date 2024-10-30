@@ -33,6 +33,11 @@ export class VisitsController {
     return this.visitsService.findOne(code.code);
   }
 
+  @Get('visitor')
+  async findVisitor(@Query() code: any): Promise<any> {
+    return this.visitsService.findVisitor(code.code);
+  }
+
   @HttpCode(HttpStatus.OK)
   @Post()
   async create(@Body() visitDto: VisitDTO): Promise<Visit> {
