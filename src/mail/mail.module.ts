@@ -31,13 +31,13 @@ import { RolesService } from 'src/roles/roles.service';
           pass: 'wazza1000', //process.env.MAIL_PASS,
         },
       },
-      template: {
-        dir: join(__dirname, 'templates'),
-        adapter: new HandlebarsAdapter(),
-        options: {
-          strict: true,
-        },
-      },
+      // template: {
+      //   dir: join(__dirname, 'templates'),
+      //   adapter: new HandlebarsAdapter(),
+      //   options: {
+      //     strict: true,
+      //   },
+      // },
     }),
     MongooseModule.forFeature([
       { name: Visitor.name, schema: VisitorsSchema },
