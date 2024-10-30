@@ -38,7 +38,7 @@ export class MailService {
     );
 
     // url = `/public/images/${visit?.code}.png`;
-    console.log('File created');
+    console.log('File created', process.env.MAIL_USER);
     await this.mailerService.sendMail({
       to: visitor[0].email,
       from: process.env.MAIL_USER,
