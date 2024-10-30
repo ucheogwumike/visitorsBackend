@@ -18,6 +18,8 @@ export class MailController {
 
   @Post()
   async create(@Body() { code }: any, @Body() { picture }: any): Promise<any> {
+    console.log(process.env.MAIL_USER);
+    console.log(process.env.MAIL_PASS);
     return this.mailService.sendVisitPass(code, picture);
   }
 }
