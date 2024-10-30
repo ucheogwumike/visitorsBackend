@@ -39,26 +39,31 @@ export class MailService {
 
     // url = `/public/images/${visit?.code}.png`;
     console.log('File created', process.env.MAIL_USER);
-    await this.mailerService.sendMail({
-      to: visitor[0].email,
-      from: process.env.MAIL_USER,
-      subject: 'Your Visit Has Been Approved',
-      html: `<p>Welcome please show the image attached to this 
+    return await this.mailerService
+      .sendMail({
+        to: visitor[0].email,
+        from: process.env.MAIL_USER,
+        subject: 'Your Visit Has Been Approved',
+        html: `<p>Welcome please show the image attached to this 
         mail at the reception in order to proceed with your meeting</p>
         <p>meeting code : ${visit?.code} </p>
-        <img src='${process.env.API_URL}/images/${visit?.code}.png'>
+        
 
         <p>Thank You!</p>
         `,
-      attachments: [
-        {
-          path: `${process.cwd()}/public/images/${visit?.code}.png`,
-          filename: `${visit?.code}.png`,
-          content: 'contentType',
-        },
-      ],
-    });
-
-    return 'email successfully sent';
+        attachments: [
+          {
+            path: `${process.cwd()}/public/images/${visit?.code}.png`,
+            filename: `${visit?.code}.png`,
+            content: 'contentType',
+          },
+        ],
+      })
+      .then(() => {
+        return 'email successfully sent';
+      })
+      .catch((error) => {
+        return error;
+      });
   }
 }
