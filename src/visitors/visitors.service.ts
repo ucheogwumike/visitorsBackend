@@ -57,6 +57,30 @@ export class VisitorsService {
     }
   }
 
+  async createTemp(visitor: VisitorDTO): Promise<any> {
+    console.log('check2');
+    const check = await this.VisitorModel.findOne({ email: visitor.email });
+    if (check) {
+      return this.SuccessResponse(
+        'visitor created successfully',
+        { created: true, visitor },
+        HttpStatus.CREATED,
+      );
+    }
+    const role = await this.roleService.findOne('visitor');
+    visitor.roleName = role?.name;
+    visitor.role = role;
+    visitor = await this.VisitorModel.create(visitor);
+    console.log('check');
+    if (visitor.email) {
+      return this.SuccessResponse(
+        'visitor created successfully',
+        { created: true, visitor },
+        HttpStatus.CREATED,
+      );
+    }
+  }
+
   async blockVisitor(
     visitorEmail: { email: string },
     email: string,

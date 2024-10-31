@@ -30,6 +30,12 @@ export class VisitorsController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @Post('temp')
+  async createTemp(@Body() visitorDto: VisitorDTO): Promise<Visitor> {
+    return this.visitorsService.createTemp(visitorDto);
+  }
+
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Patch('block')
   async block(

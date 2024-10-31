@@ -66,4 +66,26 @@ export class MailService {
         return error;
       });
   }
+
+  // async sendPreRegMail(email: string, visit: any): Promise<any> {
+  //   return await this.mailerService
+  //     .sendMail({
+  //       to: email,
+  //       from: process.env.MAIL_USER,
+  //       subject: 'Visit Pre Booked',
+  //       html: `<p>You have successfully prebooked a visit for ${visit?.dateOfVisit}.</p>
+  //       <p>On the day of your visit Please show the code below at the reception to proceed </p>
+  //       <p>meeting code : ${visit?.code} </p>
+        
+
+  //       <p>Thank You!</p>
+  //       `,
+  //     })
+  //     .then(() => {
+  //       return 'email successfully sent';
+  //     })
+  //     .catch((error) => {
+  //       return error;
+  //     });
+  // }
 }

@@ -13,6 +13,10 @@ import { StaffsService } from 'src/staffs/staffs.service';
 import { VisitorsService } from 'src/visitors/visitors.service';
 import { DepartmentsService } from 'src/departments/departments.service';
 import { Visitor } from 'src/visitors/schema/visitor.schema';
+// import { MailService } from 'src/mail/mail.service';
+// import { MailModule } from 'src/mail/mail.module';
+import { MailerService } from '@nestjs-modules/mailer';
+
 @Injectable()
 export class VisitsService {
   constructor(
@@ -21,6 +25,7 @@ export class VisitsService {
     private staffService: StaffsService,
     private visitorService: VisitorsService,
     private departmentService: DepartmentsService,
+    private mailerService: MailerService,
   ) {}
 
   SuccessResponse(
@@ -114,6 +119,21 @@ export class VisitsService {
     // if (await this.findOne(department.name)) {
     //   throw new BadRequestException('departnment name already exists');
     // }
+    let checkSpam = 0;
+    const oldVisits = await this.findAllForAUser({
+      email: visit.visitorEmail,
+      type: 'visitor',
+    });
+
+    for (const old of oldVisits) {
+      if (old.status === 'ongoing') {
+        checkSpam = checkSpam + 1;
+      }
+    }
+
+    if (checkSpam > 3) {
+      throw new BadRequestException('You have booked too many visits');
+    }
     const meet = new Date();
     const newMeet = new Date(
       meet.getTime() - meet.getTimezoneOffset() * 60 * 1000,
@@ -128,8 +148,11 @@ export class VisitsService {
       visit.signIn = new Date(ms).toTimeString().split(' ')[0];
     }
     visit.code = await this.uniqueCode();
-    visit.staff = await this.staffService.findOne(visit.staffEmail);
+    if (visit.staff) {
+      visit.staff = await this.staffService.findOne(visit.staffEmail);
+    }
     visit.visitor = await this.visitorService.findOne(visit.visitorEmail);
+    console.log(visit.visitor);
     visit.department = await this.departmentService.findOne(
       visit.departmentName,
     );
@@ -150,15 +173,34 @@ export class VisitsService {
       throw new BadRequestException('A blocked visitor can not book a visit');
     }
 
-    await this.VisitModel.create(visit);
+    const newVisit = await this.VisitModel.create(visit);
+    console.log(newVisit);
     // create code ;
-    if (await this.findOne(visit.code)) {
-      return this.SuccessResponse(
-        'visit created successfully',
-        { created: true, visit },
-        HttpStatus.CREATED,
-      );
-    }
+
+    await this.mailerService
+      .sendMail({
+        to: visit.visitorEmail,
+        from: process.env.MAIL_USER,
+        subject: 'Visit Pre Booked',
+        html: `<p>You have successfully prebooked a visit for ${newVisit?.dateOfVisit}.</p>
+        <p>On the day of your visit Please show the code below at the reception to proceed </p>
+        <p>meeting code : ${newVisit?.code} </p>
+        
+
+        <p>Thank You!</p>
+        `,
+      })
+      .then(() => {
+        // return 'email successfully sent';
+        return this.SuccessResponse(
+          'visit created successfully',
+          { created: true, visit, mail: 'sent' },
+          HttpStatus.CREATED,
+        );
+      })
+      .catch((error) => {
+        return error;
+      }); //sendPreRegMail(visit.visitorEmail, newVisit);
   }
 
   async reschedule(

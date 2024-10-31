@@ -14,6 +14,10 @@ import { VisitorsService } from 'src/visitors/visitors.service';
 import { DepartmentsService } from 'src/departments/departments.service';
 import { RolesService } from 'src/roles/roles.service';
 import { Role, RolesSchema } from 'src/roles/schemas/role.schema';
+import { MailerModule } from '@nestjs-modules/mailer';
+
+// import { VisitorsModule } from 'src/visitors/visitors.module';
+// import { StaffsModule } from 'src/staffs/staffs.module';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -23,6 +27,24 @@ import { Role, RolesSchema } from 'src/roles/schemas/role.schema';
       { name: Department.name, schema: DepartmentsSchema },
       { name: Role.name, schema: RolesSchema },
     ]),
+    MailerModule.forRoot({
+      transport: {
+        host: String(process.env.MAIL_HOST),
+        port: Number(process.env.MAIL_PORT),
+        secure: true,
+        auth: {
+          user: process.env.MAIL_USER,
+          pass: process.env.MAIL_PASS,
+        },
+      },
+      // template: {
+      //   dir: join(__dirname, 'templates'),
+      //   adapter: new HandlebarsAdapter(),
+      //   options: {
+      //     strict: true,
+      //   },
+      // },
+    }),
   ],
   providers: [
     VisitsService,
