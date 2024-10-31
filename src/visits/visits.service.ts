@@ -229,4 +229,19 @@ export class VisitsService {
       HttpStatus.OK,
     );
   }
+
+  async update(visit: VisitDTO): Promise<any> {
+    const check = await this.findOne(visit.code);
+    if (!check) {
+      throw new NotFoundException('visit not found');
+    }
+
+    const updatedVisit = await this.VisitModel.updateOne(visit);
+
+    return this.SuccessResponse(
+      'visit updated successfully',
+      { created: true, updatedVisit },
+      HttpStatus.OK,
+    );
+  }
 }

@@ -43,4 +43,10 @@ export class VisitsController {
   async create(@Body() visitDto: VisitDTO): Promise<Visit> {
     return this.visitsService.create(visitDto);
   }
+
+  @HttpCode(HttpStatus.OK)
+  @Patch()
+  async update(@Body() visitDto: VisitDTO): Promise<any> {
+    return this.update(visitDto);
+  }
 }
