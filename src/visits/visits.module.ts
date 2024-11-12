@@ -15,6 +15,8 @@ import { DepartmentsService } from 'src/departments/departments.service';
 import { RolesService } from 'src/roles/roles.service';
 import { Role, RolesSchema } from 'src/roles/schemas/role.schema';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { MailService } from 'src/mail/mail.service';
+import { MailModule } from 'src/mail/mail.module';
 import {
   Permission,
   PermissionSchema,
@@ -24,6 +26,7 @@ import {
 // import { StaffsModule } from 'src/staffs/staffs.module';
 @Module({
   imports: [
+    MailModule,
     MongooseModule.forFeature([
       { name: Visitor.name, schema: VisitorsSchema },
       { name: Staff.name, schema: StaffSchema },
@@ -57,6 +60,7 @@ import {
     VisitorsService,
     DepartmentsService,
     RolesService,
+    MailService,
   ],
   controllers: [VisitsController],
 })
