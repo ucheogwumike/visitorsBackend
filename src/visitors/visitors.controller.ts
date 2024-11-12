@@ -3,6 +3,8 @@ import {
   Body,
   Get,
   Post,
+  // Res,
+  Req,
   Patch,
   HttpCode,
   HttpStatus,
@@ -19,8 +21,8 @@ export class VisitorsController {
   constructor(private readonly visitorsService: VisitorsService) {}
 
   @Get()
-  async findAll(): Promise<Visitor[]> {
-    return this.visitorsService.findAll();
+  async findAll(@Req() request: any): Promise<Visitor[]> {
+    return this.visitorsService.findAll(request.query);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -36,26 +38,26 @@ export class VisitorsController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   @Patch('block')
   async block(
-    @Request() req: any,
+   // @Request() req: any,
     @Body() visitorsEmail: { email: string },
   ): Promise<any> {
-    console.log(req.user.name.email);
+    //console.log(req.user.name.email);
     return this.visitorsService.blockVisitor(
       visitorsEmail,
-      req.user.name.toString(),
+      //req.user.name.toString(),
     );
   }
 
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   @Patch('unblock')
   async unblock(
-    @Request() req: any,
+    //@Request() req: any,
     @Body() visitorsEmail: { email: string },
   ): Promise<any> {
-    return this.visitorsService.unblockVisitor(visitorsEmail, req.user.name);
+    return this.visitorsService.unblockVisitor(visitorsEmail);
   }
 }

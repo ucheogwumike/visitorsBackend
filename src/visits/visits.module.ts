@@ -15,6 +15,10 @@ import { DepartmentsService } from 'src/departments/departments.service';
 import { RolesService } from 'src/roles/roles.service';
 import { Role, RolesSchema } from 'src/roles/schemas/role.schema';
 import { MailerModule } from '@nestjs-modules/mailer';
+import {
+  Permission,
+  PermissionSchema,
+} from 'src/permissions/schemas/permission.schema';
 
 // import { VisitorsModule } from 'src/visitors/visitors.module';
 // import { StaffsModule } from 'src/staffs/staffs.module';
@@ -26,6 +30,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
       { name: Visit.name, schema: VisitsSchema },
       { name: Department.name, schema: DepartmentsSchema },
       { name: Role.name, schema: RolesSchema },
+      { name: Permission.name, schema: PermissionSchema },
     ]),
     MailerModule.forRoot({
       transport: {

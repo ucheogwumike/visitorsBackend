@@ -5,11 +5,14 @@ export type DepartmentDocument = HydratedDocument<Department>;
 
 @Schema()
 export class Department {
-  @Prop()
+  @Prop({ required: true })
   name: string;
 
-  @Prop()
+  @Prop({ required: true })
   color: string;
+
+  @Prop({ default: null })
+  floor: number;
 }
 
 export const DepartmentsSchema = SchemaFactory.createForClass(Department);

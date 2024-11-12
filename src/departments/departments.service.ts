@@ -1,7 +1,7 @@
 import {
   Injectable,
   //   UnauthorizedException,
-  //   NotFoundException,
+  NotFoundException,
   BadRequestException,
   HttpStatus,
 } from '@nestjs/common';
@@ -46,6 +46,28 @@ export class DepartmentsService {
         { created: true, department },
         HttpStatus.CREATED,
       );
+    }
+  }
+
+  async update(name: string, dept: any): Promise<any> {
+    const department = await this.DepartmentModel.findOne({ name });
+    if (!department) {
+      throw new NotFoundException('department not found');
+    }
+    console.log(dept);
+    const update = await this.DepartmentModel.updateOne(
+      { name: department.name },
+      dept,
+    );
+
+    if (update) {
+      return this.SuccessResponse(
+        'updated successfully',
+        { created: true, department },
+        HttpStatus.CREATED,
+      );
+    } else {
+      throw new BadRequestException('could not update');
     }
   }
 }

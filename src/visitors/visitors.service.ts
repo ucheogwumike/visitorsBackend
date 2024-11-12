@@ -1,6 +1,6 @@
 import {
   Injectable,
-  UnauthorizedException,
+  // UnauthorizedException,
   NotFoundException,
   HttpStatus,
 } from '@nestjs/common';
@@ -11,6 +11,7 @@ import { Visitor } from './schema/visitor.schema';
 import { VisitorDTO } from './dto/visitor.dto';
 import { StaffsService } from 'src/staffs/staffs.service';
 import { RolesService } from 'src/roles/roles.service';
+// import { APIFeatures } from 'src/utils/apiFeatures';
 
 @Injectable()
 export class VisitorsService {
@@ -28,8 +29,11 @@ export class VisitorsService {
     return { data, message, error: false, code };
   }
 
-  async findAll(): Promise<Visitor[]> {
-    return await this.VisitorModel.find().exec();
+  async findAll(query?: any): Promise<Visitor[]> {
+    return await this.VisitorModel.find()
+      .skip((query?.page - 1) * 10)
+      .limit(10)
+      .exec();
   }
 
   async findOne(email: string): Promise<Visitor | null> {
@@ -83,16 +87,16 @@ export class VisitorsService {
 
   async blockVisitor(
     visitorEmail: { email: string },
-    email: string,
+    // email: string,
   ): Promise<any> {
-    console.log(email);
-    console.log(typeof email);
-    const staff = await this.staffService.findOne(email);
+    // console.log(email);
+    // console.log(typeof email);
+    // const staff = await this.staffService.findOne(email);
     const visitor = await this.findOne(visitorEmail.email);
 
-    if (!staff) {
-      throw new UnauthorizedException();
-    }
+    // if (!staff) {
+    //   throw new UnauthorizedException();
+    // }
     if (!visitor) {
       throw new NotFoundException();
     }
@@ -115,14 +119,14 @@ export class VisitorsService {
 
   async unblockVisitor(
     visitorEmail: { email: string },
-    email: string,
+    // email: string,
   ): Promise<any> {
-    const staff = await this.staffService.findOne(email);
+    // const staff = await this.staffService.findOne(email);
     const visitor = await this.findOne(visitorEmail.email);
 
-    if (!staff) {
-      throw new UnauthorizedException();
-    }
+    // if (!staff) {
+    //   throw new UnauthorizedException();
+    // }
     if (!visitor) {
       throw new NotFoundException();
     }

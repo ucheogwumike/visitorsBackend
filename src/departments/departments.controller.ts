@@ -3,10 +3,10 @@ import {
   Body,
   Get,
   Post,
-  //   Patch,
+  Patch,
   HttpCode,
   HttpStatus,
-  //   Request,
+  Request,
   //   UseGuards,
 } from '@nestjs/common';
 import { DepartmentsService } from './departments.service';
@@ -29,6 +29,17 @@ export class DepartmentsController {
     return this.departmentsService.create(departmentDto);
   }
 
+  @HttpCode(HttpStatus.OK)
+  @Patch()
+  async update(
+    @Request() req: any,
+    @Body() departmentDto: DepartmentDTO,
+  ): Promise<Department> {
+    return this.departmentsService.update(
+      req.query.name.toString(),
+      departmentDto,
+    );
+  }
   //   @HttpCode(HttpStatus.OK)
   //   @UseGuards(AuthGuard)
   //   @Patch('block')

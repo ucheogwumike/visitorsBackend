@@ -8,6 +8,10 @@ import { Staff, StaffSchema } from 'src/staffs/schemas/staff.schema';
 import { StaffsService } from 'src/staffs/staffs.service';
 import { Role, RolesSchema } from 'src/roles/schemas/role.schema';
 import { RolesService } from 'src/roles/roles.service';
+import {
+  Permission,
+  PermissionSchema,
+} from 'src/permissions/schemas/permission.schema';
 
 @Module({
   imports: [
@@ -16,6 +20,7 @@ import { RolesService } from 'src/roles/roles.service';
       { name: Visitor.name, schema: VisitorsSchema },
       { name: Staff.name, schema: StaffSchema },
       { name: Role.name, schema: RolesSchema },
+      { name: Permission.name, schema: PermissionSchema },
     ]),
   ],
   controllers: [VisitorsController],

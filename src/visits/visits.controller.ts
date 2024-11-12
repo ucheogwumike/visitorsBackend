@@ -7,6 +7,7 @@ import {
   Patch,
   HttpCode,
   HttpStatus,
+  Req,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -19,8 +20,8 @@ export class VisitsController {
   constructor(private readonly visitsService: VisitsService) {}
 
   @Get()
-  async findAll(): Promise<Visit[]> {
-    return this.visitsService.findAll();
+  async findAll(@Req() request: any): Promise<Visit[]> {
+    return this.visitsService.findAll(request.query);
   }
 
   @Get('visits')
@@ -47,6 +48,15 @@ export class VisitsController {
   @HttpCode(HttpStatus.OK)
   @Patch()
   async update(@Body() visitDto: VisitDTO): Promise<any> {
-    return this.update(visitDto);
+    return this.visitsService.update(visitDto); //update(visitDto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Patch('date')
+  async updateDate(@Body() visit: any): Promise<any> {
+    return this.visitsService.reschedule({
+      code: visit.code,
+      date: visit.date,
+    }); //update(visitDto);
   }
 }

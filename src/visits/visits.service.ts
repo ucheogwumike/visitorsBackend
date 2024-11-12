@@ -50,15 +50,27 @@ export class VisitsService {
     }
   }
 
-  async findAll(): Promise<Visit[]> {
-    return await this.VisitModel.find().exec();
+  async findAll(query?: any): Promise<Visit[]> {
+    return await this.VisitModel.find()
+      .populate('visitor')
+      .populate('staff')
+      .populate('department')
+      .skip((query?.page - 1) * 10)
+      .limit(10)
+      .exec();
   }
 
   async findOne(code: any): Promise<Visit | null> {
-    return await this.VisitModel.findOne({ code })
+    const visit = await this.VisitModel.findOne({ code })
       .populate('visitor')
       .populate('staff')
       .populate('department');
+
+    if (visit) {
+      return visit;
+    } else {
+      throw new NotFoundException('visit not found');
+    }
   }
 
   async findVisitor(code: any): Promise<any> {
@@ -126,7 +138,7 @@ export class VisitsService {
     });
 
     for (const old of oldVisits) {
-      if (old.status === 'ongoing') {
+      if (old.status === 'ongoing' || old.status === 'pre-booked') {
         checkSpam = checkSpam + 1;
       }
     }
@@ -146,6 +158,9 @@ export class VisitsService {
       const [h, m] = time.split(':');
       const ms = new Date().setHours(parseInt(h), parseInt(m));
       visit.signIn = new Date(ms).toTimeString().split(' ')[0];
+      visit.status = 'ongoing';
+    } else {
+      visit.status = 'pre-booked';
     }
     visit.code = await this.uniqueCode();
     if (visit.staff) {
@@ -203,41 +218,63 @@ export class VisitsService {
       }); //sendPreRegMail(visit.visitorEmail, newVisit);
   }
 
-  async reschedule(
-    visitCode: { code: string; date: string },
-    email: string,
-  ): Promise<any> {
-    console.log(email);
-    console.log(typeof email);
-    const staff = await this.staffService.findOne(email);
+  async reschedule(visitCode: { code: string; date: string }): Promise<any> {
     const visit = await this.findOne(visitCode.code);
 
-    if (!staff) {
-      throw new UnauthorizedException();
-    }
     if (!visit) {
       throw new NotFoundException();
     }
-
+    console.log(visitCode);
     const updatedVisit = await this.VisitModel.updateOne(
+      { code: visit.code },
       { dateOfVisit: visitCode.date },
-      { status: false },
     );
-    return this.SuccessResponse(
-      'visit updated successfully',
-      { created: true, updatedVisit },
-      HttpStatus.OK,
-    );
+
+    const newVisit = await this.findOne(visitCode.code);
+
+    await this.mailerService
+      .sendMail({
+        to: visit?.visitor[0]?.email,
+        from: process.env.MAIL_USER,
+        subject: 'Visit Rescheduled',
+        html: `<p>You Visit has been rescheduled from ${visit?.dateOfVisit}.</p>
+        <p>To this date ${newVisit?.dateOfVisit}</p>
+        <p>meeting code : ${newVisit?.code} </p>
+        
+
+        <p>Thank You!</p>
+        `,
+      })
+      .then(() => {
+        // return 'email successfully sent';
+        return this.SuccessResponse(
+          'visit updated successfully',
+          { created: true, updatedVisit, mail: 'sent' },
+          HttpStatus.CREATED,
+        );
+      })
+      .catch((error) => {
+        return error;
+      });
   }
 
-  async update(visit: VisitDTO): Promise<any> {
+  async update(visit: any): Promise<any> {
     const check = await this.findOne(visit.code);
+    console.log(check);
+    // console.log(visit);
     if (!check) {
       throw new NotFoundException('visit not found');
     }
-
-    const updatedVisit = await this.VisitModel.updateOne(visit);
-
+    delete visit._id;
+    const updatedVisit = await this.VisitModel.updateOne(
+      { code: visit.code },
+      {
+        signIn: visit?.signIn ? visit.signIn : check.signIn,
+        signOut: visit?.signOut ? visit.signOut : check.signOut,
+        status: visit?.status ? visit.status : check.status,
+      },
+    );
+    // console.log(updatedVisit);
     return this.SuccessResponse(
       'visit updated successfully',
       { created: true, updatedVisit },

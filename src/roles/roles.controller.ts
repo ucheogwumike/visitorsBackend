@@ -3,10 +3,10 @@ import {
   Body,
   Get,
   Post,
-  //   Patch,
+  Patch,
   HttpCode,
   HttpStatus,
-  //   Request,
+  Request,
   //   UseGuards,
 } from '@nestjs/common';
 import { RolesService } from './roles.service';
@@ -22,9 +22,26 @@ export class RolesController {
     return this.rolesService.findAll();
   }
 
+  @Get('one')
+  async findOne(@Request() req: any): Promise<Role | null> {
+    return this.rolesService.findOne(req.query.name.toString());
+  }
+
   @HttpCode(HttpStatus.OK)
   @Post()
   async create(@Body() roleDto: RoleDTO): Promise<Role> {
     return this.rolesService.create(roleDto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Patch('add')
+  async addPermission(
+    @Body() permissions: [],
+    @Request() req: any,
+  ): Promise<Role> {
+    return this.rolesService.addPermisssions(
+      req.query.name.toString(),
+      permissions,
+    );
   }
 }

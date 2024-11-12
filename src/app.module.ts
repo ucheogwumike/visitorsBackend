@@ -11,6 +11,7 @@ import { RolesModule } from './roles/roles.module';
 import { DepartmentsModule } from './departments/departments.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailModule } from './mail/mail.module';
+import { PermissionsModule } from './permissions/permissions.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { MailModule } from './mail/mail.module';
     RolesModule,
     DepartmentsModule,
     MailModule,
+    PermissionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

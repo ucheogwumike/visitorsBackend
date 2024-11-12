@@ -12,6 +12,10 @@ import { Role, RolesSchema } from 'src/roles/schemas/role.schema';
 import { RolesService } from 'src/roles/roles.service';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
+import {
+  Permission,
+  PermissionSchema,
+} from 'src/permissions/schemas/permission.schema';
 
 @Module({
   imports: [
@@ -21,6 +25,7 @@ import { jwtConstants } from './constants';
       { name: Staff.name, schema: StaffSchema },
       { name: Visitor.name, schema: VisitorsSchema },
       { name: Role.name, schema: RolesSchema },
+      { name: Permission.name, schema: PermissionSchema },
     ]),
     JwtModule.register({
       global: true,

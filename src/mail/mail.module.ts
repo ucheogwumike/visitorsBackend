@@ -18,6 +18,10 @@ import { DepartmentsService } from 'src/departments/departments.service';
 import { Role, RolesSchema } from 'src/roles/schemas/role.schema';
 import { RolesService } from 'src/roles/roles.service';
 import { VisitsService } from 'src/visits/visits.service';
+import {
+  Permission,
+  PermissionSchema,
+} from 'src/permissions/schemas/permission.schema';
 
 @Module({
   imports: [
@@ -45,6 +49,7 @@ import { VisitsService } from 'src/visits/visits.service';
       { name: Visit.name, schema: VisitsSchema },
       { name: Department.name, schema: DepartmentsSchema },
       { name: Role.name, schema: RolesSchema },
+      { name: Permission.name, schema: PermissionSchema },
     ]),
   ],
   providers: [

@@ -1,7 +1,7 @@
 import {
   Injectable,
   //   UnauthorizedException,
-  //   NotFoundException,
+  NotFoundException,
   BadRequestException,
   HttpStatus,
 } from '@nestjs/common';
@@ -9,10 +9,14 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { RoleDTO } from './dto/role.dto';
 import { Role } from './schemas/role.schema';
+import { Permission } from 'src/permissions/schemas/permission.schema';
 
 @Injectable()
 export class RolesService {
-  constructor(@InjectModel(Role.name) private RoleModel: Model<Role>) {}
+  constructor(
+    @InjectModel(Role.name) private RoleModel: Model<Role>,
+    @InjectModel(Permission.name) private PermissionModel: Model<Permission>,
+  ) {}
 
   SuccessResponse(
     message: string,
@@ -42,6 +46,44 @@ export class RolesService {
         { created: true, role },
         HttpStatus.CREATED,
       );
+    }
+  }
+
+  async addPermisssions(name: string, permissions: any): Promise<any> {
+    let badPerm = 0;
+    console.log(permissions);
+    const perms = [];
+    const role = await this.RoleModel.findOne({ name });
+    if (!role) {
+      throw new NotFoundException('role not found');
+    }
+
+    for (const perm of permissions.permissions) {
+      const check = await this.PermissionModel.findOne({ name: perm });
+      if (!check) {
+        badPerm = badPerm + 1;
+        break;
+      }
+      perms.push(check);
+    }
+
+    if (badPerm) {
+      throw new BadRequestException('permission not found');
+    }
+
+    const update = await this.RoleModel.updateOne(
+      { name: role.name },
+      { permissions: perms },
+    );
+
+    if (update) {
+      return this.SuccessResponse(
+        'updated successfully',
+        { created: true, role },
+        HttpStatus.CREATED,
+      );
+    } else {
+      throw new BadRequestException('could not update');
     }
   }
 }
