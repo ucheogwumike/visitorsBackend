@@ -51,6 +51,9 @@ export class VisitsService {
   }
 
   async findAll(query?: any): Promise<Visit[]> {
+    if(!query?.page){
+      query.page = 1
+    }
     return await this.VisitModel.find()
       .populate('visitor')
       .populate('staff')

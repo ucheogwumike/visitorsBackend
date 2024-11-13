@@ -30,6 +30,9 @@ export class VisitorsService {
   }
 
   async findAll(query?: any): Promise<Visitor[]> {
+    if(!query?.page){
+      query.page = 1
+    }
     return await this.VisitorModel.find()
       .skip((query?.page - 1) * 10)
       .limit(10)
