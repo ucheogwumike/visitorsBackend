@@ -39,6 +39,11 @@ export class VisitsController {
     return this.visitsService.findVisitor(code.code);
   }
 
+  @Get('dashboard')
+  async dashboard(): Promise<any> {
+    return this.visitsService.dashboard();
+  }
+
   @HttpCode(HttpStatus.OK)
   @Post()
   async create(@Body() visitDto: VisitDTO): Promise<Visit> {

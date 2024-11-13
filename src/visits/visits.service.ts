@@ -335,4 +335,53 @@ export class VisitsService {
       HttpStatus.OK,
     );
   }
+
+  async dashboard(): Promise<any> {
+    const visitorCount = (await this.VisitorModel.find()).length;
+    const visitCount = (await this.VisitModel.find()).length;
+
+    const blockeVisitors = (await this.VisitorModel.find({ status: false }))
+      .length;
+    const ongoingvisitCount = (
+      await this.VisitModel.find({ status: 'ongoing' })
+    ).length;
+
+    const recentVisits = await this.VisitModel.find()
+      .sort({ _id: -1 })
+      .populate('visitor')
+      .limit(5);
+
+    const visitByMonthAndYear = await this.VisitModel.find();
+
+    const monthAndYear = [];
+    const year = new Date().getFullYear();
+    for (const val of visitByMonthAndYear) {
+      if (new Date(val.dateOfVisit).getFullYear() === year) {
+        if (monthAndYear[new Date(val.dateOfVisit).getMonth()]) {
+          monthAndYear[new Date(val.dateOfVisit).getMonth()].visits += 1;
+        } else {
+          monthAndYear[new Date(val.dateOfVisit).getMonth()] = {
+            month: new Date(val.dateOfVisit).toLocaleDateString('default', {
+              month: 'short',
+            }),
+            visits: 1,
+          };
+        }
+      }
+    }
+
+    console.log(monthAndYear);
+    return this.SuccessResponse(
+      'Dashboard stats loaded',
+      {
+        visitorCount,
+        visitCount,
+        blockeVisitors,
+        ongoingvisitCount,
+        recentVisits,
+        monthAndYear,
+      },
+      HttpStatus.CREATED,
+    );
+  }
 }
