@@ -34,6 +34,7 @@ export class VisitorsService {
       query.page = 1;
     }
     return await this.VisitorModel.find()
+      .sort({ _id: -1 })
       .skip((query?.page - 1) * 10)
       .limit(10)
       .exec();
@@ -117,6 +118,42 @@ export class VisitorsService {
     return {
       message: `visitor with email ${visitor.email} has been blocked`,
       data: updatedVisitor,
+    };
+  }
+
+  async updateProfilePic(
+    visitorEmail: { email: string; picture: any },
+    // email: string,
+  ): Promise<any> {
+    // console.log(email);
+    // console.log(typeof email);
+    // const staff = await this.staffService.findOne(email);
+    let visitor = await this.findOne(visitorEmail.email);
+
+    // if (!staff) {
+    //   throw new UnauthorizedException();
+    // }
+    if (!visitor) {
+      throw new NotFoundException();
+    }
+
+    if (visitor.status == false) {
+      return {
+        message: `visitor with email ${visitor.email} has been blocked`,
+        data: visitor,
+      };
+    }
+    const updatedVisitor = await this.VisitorModel.updateOne(
+      { email: visitor.email },
+      { profile_picture: visitorEmail.picture },
+    );
+
+    if (updatedVisitor) {
+      visitor = await this.findOne(visitorEmail.email);
+    }
+    return {
+      message: `visitor with email ${visitor?.email} has been blocked`,
+      data: visitor,
     };
   }
 

@@ -41,7 +41,7 @@ export class VisitorsController {
   //@UseGuards(AuthGuard)
   @Patch('block')
   async block(
-   // @Request() req: any,
+    // @Request() req: any,
     @Body() visitorsEmail: { email: string },
   ): Promise<any> {
     //console.log(req.user.name.email);
@@ -59,5 +59,15 @@ export class VisitorsController {
     @Body() visitorsEmail: { email: string },
   ): Promise<any> {
     return this.visitorsService.unblockVisitor(visitorsEmail);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  //@UseGuards(AuthGuard)
+  @Patch('profile')
+  async profile(
+    //@Request() req: any,
+    @Body() visitorsEmail: { email: string; picture: any },
+  ): Promise<any> {
+    return this.visitorsService.updateProfilePic(visitorsEmail);
   }
 }

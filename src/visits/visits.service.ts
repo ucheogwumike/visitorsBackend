@@ -58,6 +58,7 @@ export class VisitsService {
       .populate('visitor')
       .populate('staff')
       .populate('department')
+      .sort({ _id: -1 })
       .skip((query?.page - 1) * 10)
       .limit(10)
       .exec();
@@ -77,14 +78,15 @@ export class VisitsService {
   }
 
   async findVisitor(code: any): Promise<any> {
-    const visit = await this.VisitModel.findOne({ code });
+    const visit = await this.VisitModel.findOne({ code }).populate(
+      'department',
+    );
 
     const visitor = await this.VisitorModel.findById(visit?.visitor[0]._id);
-
     if (visitor) {
       return this.SuccessResponse(
         'visitor created successfully',
-        visitor,
+        { visitor, visit },
         HttpStatus.OK,
       );
     } else {
